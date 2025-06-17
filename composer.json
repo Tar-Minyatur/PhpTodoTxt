@@ -1,7 +1,6 @@
 {
   "name": "tshw/php-todo-txt",
   "description": "PHP library for the todo.txt unstructured todo list format.",
-  "version": "0.0.1",
   "minimum-stability": "stable",
   "license": "GPL-3.0-or-later",
   "authors": [
