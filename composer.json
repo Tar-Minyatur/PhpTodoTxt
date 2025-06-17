@@ -20,5 +20,8 @@
   },
   "require-dev": {
     "phpunit/phpunit": "@stable"
+  },
+  "scripts": {
+    "test": "cd test/ && ../vendor/bin/phpunit ."
   }
 }
