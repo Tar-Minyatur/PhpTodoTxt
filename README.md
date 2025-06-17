@@ -1,4 +1,4 @@
-# PHPTodoTxt
+# PHPTodoTxt [![Run Test [Composer]](https://github.com/Tar-Minyatur/PhpTodoTxt/actions/workflows/php.yml/badge.svg)](https://github.com/Tar-Minyatur/PhpTodoTxt/actions/workflows/php.yml)
 
 PHP library for the [todo.txt](http://todotxt.org/) unstructured todo list format.
 
