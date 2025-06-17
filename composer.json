@@ -1,0 +1,24 @@
+{
+  "name": "tshw/php-todo-txt",
+  "description": "PHP library for the todo.txt unstructured todo list format.",
+  "version": "0.0.1",
+  "minimum-stability": "stable",
+  "license": "GPL-3.0-or-later",
+  "authors": [
+    {
+      "name": "Till Helge Helwig",
+      "email": "till@tshw.de"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "PhpTodoTxt\\": "src/"
+    }
+  },
+  "require": {
+    "ext-mbstring": "*"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "@stable"
+  }
+}
