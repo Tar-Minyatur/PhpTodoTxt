@@ -15,6 +15,9 @@ Use composer to add as dependency:
 
     $ composer require tshw/php-todo-txt
 
+> [!WARNING]
+> The library is currently not yet published, so you'll have to add it manually for now.
+
 Create an object of the main class:
 
     <?php
