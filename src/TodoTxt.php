@@ -2,7 +2,8 @@
 
 namespace PhpTodoTxt;
 
-use PhpTodoTxt\Models\Todo;
+use ArrayIterator;
+use PhpTodoTxt\Models\Task;
 
 class TodoTxt {
 

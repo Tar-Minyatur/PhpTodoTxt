@@ -2,7 +2,18 @@
 
 namespace PhpTodoTxt\Models;
 
-class Todo {
+use PhpTodoTxt\TodoTxt;
+
+/**
+ * A single task on a task list.
+ *
+ * Follows the simple schema defined by the t​odo.txt project.
+ *
+ * Can be used individually, but usually it makes more sense to parse an entire task list.
+ *
+ * @see TodoTxt
+ */
+class Task {
 
     private bool $done = false;
     private string $text = '';
@@ -17,7 +28,7 @@ class Todo {
         return $this->done;
     }
 
-    public function setDone(bool $done): Todo {
+    public function setDone(bool $done): Task {
         $this->done = $done;
         return $this;
     }
@@ -40,7 +51,7 @@ class Todo {
         return $this->text;
     }
 
-    public function setText(string $text): Todo {
+    public function setText(string $text): Task {
         $this->text = $text;
         return $this;
     }
@@ -49,7 +60,7 @@ class Todo {
         return $this->priority;
     }
 
-    public function setPriority(string $priority): Todo {
+    public function setPriority(string $priority): Task {
         $this->priority = $priority;
         return $this;
     }
@@ -58,7 +69,7 @@ class Todo {
         return $this->creationDate;
     }
 
-    public function setCreationDate(?string $creationDate): Todo {
+    public function setCreationDate(?string $creationDate): Task {
         $this->creationDate = $creationDate;
         return $this;
     }
@@ -67,7 +78,7 @@ class Todo {
         return $this->completionDate;
     }
 
-    public function setCompletionDate(?string $date): Todo {
+    public function setCompletionDate(?string $date): Task {
         $this->completionDate = $date;
         return $this;
     }
@@ -76,7 +87,7 @@ class Todo {
         return $this->projects;
     }
 
-    public function addProject(string $project): Todo {
+    public function addProject(string $project): Task {
         if (!in_array($project, $this->projects)) {
             $this->projects[] = $project;
         }
@@ -87,7 +98,7 @@ class Todo {
         return $this->contexts;
     }
 
-    public function addContext(string $context): Todo {
+    public function addContext(string $context): Task {
         if (!in_array($context, $this->contexts)) {
             $this->contexts[] = $context;
         }
@@ -100,6 +111,7 @@ class Todo {
 
     public function addMeta(string $key, string $value): Todo {
         $this->meta[$key] = $value;
+    public function addMeta(string $key, string $value): Task {
         return $this;
     }
 
@@ -129,9 +141,9 @@ class Todo {
         return join(' ', $tokens);
     }
 
-    public static function fromString(string $line): Todo {
+    public static function fromString(string $line): Task {
         $tokens = explode(' ', trim($line));
-        $todo = new Todo();
+        $todo = new Task();
         if ($tokens[0] === 'x') {
             $todo->setDone(true);
             array_shift($tokens);
@@ -155,7 +167,7 @@ class Todo {
         return self::parseTodoText($tokens, $todo);
     }
 
-    private static function parseTodoText(array $tokens, Todo $todo): Todo {
+    private static function parseTodoText(array $tokens, Task $todo): Task {
         $text = [];
         foreach ($tokens as $token) {
             if (mb_substr($token, 0, 1) === '+') {
