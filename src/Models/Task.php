@@ -33,6 +33,12 @@ class Task {
         return $this;
     }
 
+    public function done(): Task {
+        $this->setDone(true);
+        $this->setCompletionDate(date('Y-m-d'));
+        return $this;
+    }
+
     public function getText(): string {
         return $this->text;
     }

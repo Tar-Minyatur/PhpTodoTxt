@@ -173,6 +173,13 @@ class TodoTest extends TestCase {
                            ['weirdProjectWithSpaces'], ['strangeContextWithSpaces'], ['sillyKey' => 'evenMoreSillyValue']);
     }
 
+    public function testMarkingAsDone() {
+        $todo = $this->givenTodo('Test', false, null, null);
+        $todo->done();
+        $today = date('Y-m-d');
+        $this->thenTodoHas($todo, 'Test', true, null, null, $today, 0, 0, 0);
+    }
+
     private function givenTodo(
         string $text = "Test",
         bool $done = false,
