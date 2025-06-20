@@ -89,7 +89,7 @@ class Task {
 
     public function addProject(string $project): Task {
         if (!in_array($project, $this->projects)) {
-            $this->projects[] = $project;
+            $this->projects[] = $this->sanitizeTag($project);
         }
         return $this;
     }
@@ -100,7 +100,7 @@ class Task {
 
     public function addContext(string $context): Task {
         if (!in_array($context, $this->contexts)) {
-            $this->contexts[] = $context;
+            $this->contexts[] = $this->sanitizeTag($context);
         }
         return $this;
     }
@@ -112,6 +112,7 @@ class Task {
     public function addMeta(string $key, string $value): Todo {
         $this->meta[$key] = $value;
     public function addMeta(string $key, string $value): Task {
+        $this->meta[$this->sanitizeTag($key)] = $this->sanitizeTag($value);
         return $this;
     }
 
@@ -181,5 +182,19 @@ class Task {
         }
         $todo->setText(join(' ', $text));
         return $todo;
+    }
+
+    private function sanitizeTag(string $tag): string {
+        $result = '';
+        foreach (preg_split('#\s+#', trim($tag), -1, PREG_SPLIT_NO_EMPTY) as $token) {
+            if (empty($result)) {
+                $result .= ($token);
+            } else {
+                $firstLetter = mb_convert_case($token[0], MB_CASE_UPPER);
+                $tail = mb_convert_case(mb_substr($token, 1),MB_CASE_LOWER);
+                $result .= $firstLetter . $tail;
+            }
+        }
+        return $result;
     }
 }

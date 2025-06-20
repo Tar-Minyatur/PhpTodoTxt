@@ -164,6 +164,15 @@ class TodoTest extends TestCase {
                            true, null, null, null, 0, 0,0);
     }
 
+    public function testTagSanitation() {
+        $todo = $this->givenTodo('Test', false, null, null);
+        $todo->addProject('weird project  with spaces');
+        $todo->addContext('strange CONTEXT with   SPACES');
+        $todo->addMeta('silly key', 'even more silly value');
+        $this->thenTodoHas($todo, 'Test', false, null, null, null,
+                           ['weirdProjectWithSpaces'], ['strangeContextWithSpaces'], ['sillyKey' => 'evenMoreSillyValue']);
+    }
+
     private function givenTodo(
         string $text = "Test",
         bool $done = false,
