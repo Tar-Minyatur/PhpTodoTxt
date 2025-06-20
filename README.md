@@ -18,23 +18,36 @@ Use composer to add as dependency:
 > [!WARNING]
 > The library is currently not yet published, so you'll have to add it manually for now.
 
-Create an object of the main class:
+Create an object of the main class by reading tasks from a file:
 
-    <?php
-    require 'vendor/autoload.php';
+```php
+<?php
+require 'vendor/autoload.php';
 
-    $todo = new PhpTodoTxt\TodoTxt();
+$todos = \PhpTodoTxt\TodoTxt::readFromFile(new \SplFileInfo("todo.txt"));
+```
 
 List all tasks:
 
-    foreach ($todo->list() as $task) {
-       echo $task->getText();
-       echo $task->isDone() ? 'Done' : 'TODO';
-    }
+```php
+foreach ($todos as $task) {
+   echo $task->getText();
+   echo $task->isDone() ? 'Done' : 'TODO';
+}
+```
 
-## Known Issues
+Modify tasks:
 
-* At the moment it is expected that a `todo.txt` is in the same folder. In future versions this will be a config parameter.
+```php
+$todos->get(4)->done();
+$todos->get(5)->addProject('myFancyProject'); 
+```
+
+Write tasks to a file:
+
+```php
+$todos->writeToFile(\SplFileInfo("todo.txt"));
+```
 
 ## License
 
