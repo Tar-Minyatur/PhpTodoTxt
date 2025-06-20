@@ -115,8 +115,6 @@ class Task {
         return $this->meta;
     }
 
-    public function addMeta(string $key, string $value): Todo {
-        $this->meta[$key] = $value;
     public function addMeta(string $key, string $value): Task {
         $this->meta[$this->sanitizeTag($key)] = $this->sanitizeTag($value);
         return $this;
