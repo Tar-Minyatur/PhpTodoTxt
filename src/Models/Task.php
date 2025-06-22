@@ -158,7 +158,7 @@ class Task {
 
     public static function fromString(string $line): Task {
         $tokens = explode(' ', trim($line));
-        $todo = new Task();
+        $todo = new Task('', null, false);
         if ($tokens[0] === 'x') {
             $todo->setDone(true);
             array_shift($tokens);

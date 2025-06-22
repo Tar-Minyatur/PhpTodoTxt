@@ -50,6 +50,48 @@ class TodoTxtTest extends TestCase {
         $this->assertNull($todos[1]);
     }
 
+    public function testMovingTaskUp() {
+        $todos = $this->givenTaskListWith3Tasks();
+        $fourthTask = (new Task())->setText('Another task');
+        $todos->addTask($fourthTask);
+        $firstTask = $todos[0];
+        $secondTask = $todos[1];
+        $thirdTask = $todos[2];
+        $todos->moveTask($firstTask, 2);
+        $this->assertNull($todos[0]);
+        $this->assertSame($secondTask, $todos[1]);
+        $this->assertSame($firstTask, $todos[2]);
+        $this->assertSame($thirdTask, $todos[3]);
+        $this->assertSame($fourthTask, $todos[4]);
+    }
+
+    public function testMovingTaskDown() {
+        $todos = $this->givenTaskListWith3Tasks();
+        $fourthTask = (new Task())->setText('Another task');
+        $todos->addTask($fourthTask);
+        $firstTask = $todos[0];
+        $secondTask = $todos[1];
+        $thirdTask = $todos[2];
+        $todos->moveTask($fourthTask, 1);
+        $this->assertSame($firstTask, $todos[0]);
+        $this->assertSame($fourthTask, $todos[1]);
+        $this->assertSame($secondTask, $todos[2]);
+        $this->assertSame($thirdTask, $todos[3]);
+    }
+
+    public function testToStringArray() {
+        $todos = $this->givenTaskListWith3Tasks();
+        $expected = ['First task', 'Second task', 'Third task'];
+        $this->assertEquals($expected, $todos->toStringArray());
+    }
+
+    public function testFromStringArray() {
+        $todos = TodoTxt::fromStringArray(["First task", "Second Task", "x Third Task"]);
+        $this->assertCount(3, $todos);
+        $this->assertEquals("First task", $todos[0]->getText());
+        $this->assertTrue($todos[2]->isDone());
+    }
+
     private function givenTaskListFromFile(): array {
         $srcFile = $this->filePath . 'simple.txt';
         $todos = TodoTxt::readFromFile($srcFile);
@@ -58,9 +100,9 @@ class TodoTxtTest extends TestCase {
 
     private function givenTaskListWith3Tasks(): TodoTxt {
         $todos = new TodoTxt();
-        $todos->addTask((new Task())->setText('First task'));
-        $todos->addTask((new Task())->setText('Second task'));
-        $todos->addTask((new Task())->setText('Third task'));
+        $todos->addTask(new Task('First task', null, false));
+        $todos->addTask(new Task('Second task', null, false));
+        $todos->addTask(new Task('Third task', null, false));
         return $todos;
     }
 

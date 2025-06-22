@@ -94,6 +94,31 @@ class TodoTxt implements \Countable, \Iterator, \ArrayAccess {
     }
 
     /**
+     * Retrieve tasks as string array, e.g. to store it in a database.
+     *
+     * @return string[] Individual lines, each representing a task
+     */
+    public function toStringArray(): array {
+        return array_map(function ($task) {
+            return strval($task);
+        }, $this->getTasks());
+    }
+
+    /**
+     * Read tasks into a new task list from a string array, e.g. one retrieved from a database.
+     *
+     * @param string[] $tasks
+     * @return TodoTxt
+     */
+    public static function fromStringArray(array $tasks): TodoTxt {
+        $todos = new TodoTxt();
+        foreach ($tasks as $task) {
+            $todos->addTask(Task::fromString($task));
+        }
+        return $todos;
+    }
+
+    /**
      * Retrieve all tasks from this task list.
      * @return Task[] All tasks
      */
@@ -114,7 +139,7 @@ class TodoTxt implements \Countable, \Iterator, \ArrayAccess {
      * Add a new task to the list.
      * @param Task $task Task to add
      */
-    public function addTask(Task $task): void {
+    public function addTask(Task $task, bool $setCreationDate = true): void {
         $newIndex = empty($this->tasks) ? 0 : (array_key_last($this->tasks) + 1);
         $this->tasks[$newIndex] = $task;
     }
@@ -150,6 +175,23 @@ class TodoTxt implements \Countable, \Iterator, \ArrayAccess {
             return $task;
         } else {
             return null;
+        }
+    }
+
+    public function moveTask(Task $task, int $targetIndex): void {
+        $oldIndex = array_search($task, $this->tasks, true);
+        $taskInTheWay = $this[$targetIndex];
+        $this[$targetIndex] = $task;
+        unset($this->tasks[$oldIndex]);
+        for ($i = $targetIndex + 1; !is_null($taskInTheWay); $i += 1) {
+            if (is_null($this[$i])) {
+                $this[$i] = $taskInTheWay;
+                $taskInTheWay = null;
+            } else {
+                $tempTask = $this[$i];
+                $this[$i] = $taskInTheWay;
+                $taskInTheWay = $tempTask;
+            }
         }
     }
 

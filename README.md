@@ -54,8 +54,29 @@ $todos->writeToFile(\SplFileInfo("todo.txt"));
 Add task:
 
 ```php
-$task = (new Task())->setText("Another task")->setPriority("F");
+$task = (new Task("Another task", "F"));
 $todos->addTask($task);
+```
+
+Move task within the list (this displaces tasks further down in the list, changing their keys!):
+
+```php
+$todos->moveTask($task, 2);
+```
+
+## FAQ
+
+### Can I use PHPTodoTxt to store tasks in a database?
+
+Absolutely. For now, the easiest way is to use `toStringArray()` and `fromStringArray()` and then you have to implement
+storing and reading to/from the database yourself:
+
+```php
+$tasks = readTasksFromDatabase();  // must return an array of strings, one task per line
+$todos = TodoTxt::fromStringArray($tasks);
+// do whatever with the list
+$tasks = $todos->toStringArray();
+writeTasksToDatabase($tasks);
 ```
 
 ## License
