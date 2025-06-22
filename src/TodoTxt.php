@@ -22,12 +22,12 @@ use PhpTodoTxt\Models\Task;
  *
  * @see Models\Task
  */
-class TodoTxt extends ArrayIterator implements \Countable {
+class TodoTxt implements \Countable, \Iterator, \ArrayAccess {
 
     private array $tasks = [];
+    private int $currentIndex = 0;
 
     public function __construct() {
-        parent::__construct($this->tasks);
     }
 
     /**
@@ -39,20 +39,24 @@ class TodoTxt extends ArrayIterator implements \Countable {
      *     $todos = \PhpTodoTxt\TodoTxt::readFromFile($file);
      * </code>
      *
-     * @param \SplFileInfo $file The file to read tasks from
+     * @param \SplFileInfo|string $file The file (or path of the file) to read tasks from
      * @return TodoTxt Object representing the entire task list
      */
-    public static function readFromFile(\SplFileInfo $file): TodoTxt {
+    public static function readFromFile(\SplFileInfo|string $file): TodoTxt {
+        if (is_string($file)) {
+            $file = new \SplFileInfo($file);
+        }
         if (!$file->isReadable()) {
-            throw new \RuntimeException("File {$file->getBasename()} is not readable!");
+            $filePath = sprintf('%s%s%s', $file->getPath(), DIRECTORY_SEPARATOR, $file->getBasename());
+            throw new \RuntimeException("File {$filePath} is not readable!");
         }
         $reader = $file->openFile('r');
         $todos = new TodoTxt();
-        while ($line = $reader->fgets()) {
+        foreach ($reader as $line) {
             if (strlen(trim($line)) === 0) {
                 continue;
             }
-            $todos->append(Task::fromString($line));
+            $todos->addTask(Task::fromString($line));
         }
         return $todos;
     }
@@ -69,10 +73,13 @@ class TodoTxt extends ArrayIterator implements \Countable {
      *     $todos->writeToFile(new \SplFileInfo("todo.txt"));
      * </code>
      *
-     * @param \SplFileInfo $file The file to write all tasks to
+     * @param \SplFileInfo|string $file The file to write all tasks to
      * @return int Number of lines written
      */
-    public function writeToFile(\SplFileInfo $file): int {
+    public function writeToFile(\SplFileInfo|string $file): int {
+        if (is_string($file)) {
+            $file = new \SplFileInfo($file);
+        }
         if (!$file->isWritable()) {
             throw new \RuntimeException("File {$file->getBasename()} is not writeable!");
         }
@@ -100,7 +107,7 @@ class TodoTxt extends ArrayIterator implements \Countable {
      * @return Task|null The task at the given position or `null` if `index` is unknown
      */
     public function get(int $index): ?Task {
-        return $this->offsetExists($index) ? $this->offsetGet($index) : null;
+        return array_key_exists($index, $this->tasks) ? $this->tasks[$index] : null;
     }
 
     /**
@@ -108,7 +115,8 @@ class TodoTxt extends ArrayIterator implements \Countable {
      * @param Task $task Task to add
      */
     public function addTask(Task $task): void {
-        $this->append($task);
+        $newIndex = empty($this->tasks) ? 0 : (array_key_last($this->tasks) + 1);
+        $this->tasks[$newIndex] = $task;
     }
 
     /**
@@ -121,7 +129,7 @@ class TodoTxt extends ArrayIterator implements \Countable {
         if ($index === false) {
             return false;
         } else {
-            $this->offsetUnset($index);
+            unset($this->tasks[$index]);
             return true;
         }
     }
@@ -133,22 +141,16 @@ class TodoTxt extends ArrayIterator implements \Countable {
      * @return Task|null The removed task or `null` if the index was invalid
      */
     public function removeTaskByIndex(int $index): ?Task {
-        if (!$this->offsetExists($index)) {
+        if (array_key_exists($index, $this->tasks)) {
+            $task = $this->get($index);
+            unset($this->tasks[$index]);
+            if ($this->currentIndex === $index) {
+                $this->next();
+            }
+            return $task;
+        } else {
             return null;
         }
-        $task = $this->offsetGet($index);
-        $this->offsetUnset($index);
-        return $task;
-    }
-
-    /**
-     * @inheritDoc
-     * @return Task|null Current task or `null` if the current position is invalid
-     * @see TodoTxt::valid()
-     */
-    public function current(): ?Task {
-        $task = parent::current();
-        return ($task instanceof Task) ? $task : null;
     }
 
     /**
@@ -157,5 +159,48 @@ class TodoTxt extends ArrayIterator implements \Countable {
      */
     public function count(): int {
         return count($this->tasks);
+    }
+
+    public function next(): void {
+        $keys = array_keys($this->tasks);
+        $index = array_search($this->currentIndex, $keys, true) + 1;
+        $this->currentIndex = array_key_exists($index, $keys) ? $keys[$index] : $this->currentIndex += 1;
+    }
+
+    public function key(): ?int {
+        return $this->currentIndex;
+    }
+
+    public function valid(): bool {
+        return array_key_exists($this->currentIndex, $this->tasks);
+    }
+
+    public function rewind(): void {
+        $this->currentIndex = array_key_first($this->tasks);
+    }
+
+    public function current(): ?Task{
+        return $this->valid() ? $this->tasks[$this->currentIndex] : null;
+    }
+
+    public function offsetExists(mixed $offset): bool {
+       return array_key_exists($offset, $this->tasks);
+    }
+
+    public function offsetGet(mixed $offset): ?Task {
+        return $this->offsetExists($offset) ? $this->tasks[$offset] : null;
+    }
+
+    public function offsetSet(mixed $offset, mixed $value): void {
+        if (!($value instanceof Task)) {
+            throw new \InvalidArgumentException('$value must be an instance of Task');
+        }
+        $this->tasks[$offset] = $value;
+    }
+
+    public function offsetUnset(mixed $offset): void {
+        if ($this->offsetExists($offset)) {
+            unset($this->tasks[$offset]);
+        }
     }
 }

@@ -1,11 +1,9 @@
 <?php
 namespace PhpTodoTxt\Models;
 
-require '../vendor/autoload.php';
-
 use PHPUnit\Framework\TestCase;
 
-class TodoTest extends TestCase {
+class TaskTest extends TestCase {
 
     public function testJustTextToString() {
         $todo = $this->givenTodo("Test");
