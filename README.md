@@ -1,6 +1,24 @@
 # PHPTodoTxt [![Run Test [Composer]](https://github.com/Tar-Minyatur/PhpTodoTxt/actions/workflows/php.yml/badge.svg)](https://github.com/Tar-Minyatur/PhpTodoTxt/actions/workflows/php.yml)
 
-PHP library for the [todo.txt](http://todotxt.org/) unstructured todo list format.
+PHP library for the [todo.txt](https://todotxt.org/) unstructured todo list format.
+
+## What is todo.txt?
+
+It's a simple file format for the todo text file that many people probably have on their desktop somewhere.
+
+A todo.txt file following this standard looks like this:
+
+    A simple task is just a line
+    x This task is done, indicated by the lowercase x
+    (F) Prioritization is important, so this is priority F
+    2025-01-01 This task has its creation date mentioned
+    x 2025-01-01 2024-05-01 This task is done and has a completion and creation date
+    For +myCoolProject I need to write documentation
+    When I'm @work I need to plan my next vacation
+
+You get the gist. It's simple, but more structured than just writing down stuff.
+
+To lean more, you can head to [todotxt.org](http://todotxt.org/) to learn more.
 
 ## Features
 
@@ -9,14 +27,13 @@ PHP library for the [todo.txt](http://todotxt.org/) unstructured todo list forma
 * Task description is available als "clean" version without trailing tags
 * Projects, contexts and meta data are available separately as arrays
 
-## Usage
+## Installation
 
 Use composer to add as dependency:
 
     $ composer require tshw/php-todo-txt
 
-> [!WARNING]
-> The library is currently not yet published, so you'll have to add it manually for now.
+## Usage
 
 Create an object of the main class by reading tasks from a file:
 
