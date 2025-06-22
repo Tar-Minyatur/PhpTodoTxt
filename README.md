@@ -25,6 +25,8 @@ Create an object of the main class by reading tasks from a file:
 require 'vendor/autoload.php';
 
 $todos = \PhpTodoTxt\TodoTxt::readFromFile(new \SplFileInfo("todo.txt"));
+// or if don't want to think about the SPL
+$todos = \PhpTodoTxt\TodoTxt::readFromFile("todo.txt");
 ```
 
 List all tasks:
@@ -39,14 +41,21 @@ foreach ($todos as $task) {
 Modify tasks:
 
 ```php
-$todos->get(4)->done();
-$todos->get(5)->addProject('myFancyProject'); 
+$todos[4]->done();
+$todos[5]->addProject('myFancyProject'); 
 ```
 
 Write tasks to a file:
 
 ```php
 $todos->writeToFile(\SplFileInfo("todo.txt"));
+```
+
+Add task:
+
+```php
+$task = (new Task())->setText("Another task")->setPriority("F");
+$todos->addTask($task);
 ```
 
 ## License

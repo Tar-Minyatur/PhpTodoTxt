@@ -24,6 +24,12 @@ class Task {
     private array $contexts = [];
     private array $meta = [];
 
+    public function __construct(string $text = '', ?string $priority = null, bool $setCreationDate = true) {
+        $this->text = $text;
+        $this->priority = $priority;
+        $this->creationDate = $setCreationDate ? date('Y-m-d') : null;
+    }
+
     public function isDone(): bool {
         return $this->done;
     }
