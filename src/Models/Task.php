@@ -121,6 +121,10 @@ class Task {
     }
 
     public function __toString(): string {
+        return $this->asTodoTxtString();
+    }
+
+    public function asTodoTxtString(): string {
         $tokens = [];
         if ($this->isDone()) $tokens[] = 'x';
         if (!$this->isDone() && !is_null($this->getPriority())) $tokens[] = sprintf('(%s)', $this->getPriority());
